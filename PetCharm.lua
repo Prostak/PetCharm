@@ -161,11 +161,7 @@ local function SuggestFromList(playerMap)
 
     local q = candidates[1]
     if C_QuestLog.AddWorldQuestWatch then C_QuestLog.AddWorldQuestWatch(q.id) end
-    C_SuperTrack.SetSuperTrackedQuestID(q.id)
-    local zoneMap = C_TaskQuest.GetQuestZoneID(q.id)
-    if zoneMap and q.x > 0 and C_Map.CanSetUserWaypointOnMap(zoneMap) then
-        C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(zoneMap, q.x / 100, q.y / 100))
-    end
+    C_SuperTrack.SetSuperTrackedQuestID(q.id)  -- just select the quest; no map pin
 
     Say(("на этом континенте заданий нет. Следующее: |cffffff00%s|r — %s (%s), %d амулетов, осталось %s.")
         :format(q.name, q.zone, q.expansion, q.count, FormatLeft(q.ending - now)))
