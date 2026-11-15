@@ -142,14 +142,26 @@ local function SuggestFromList(playerMap)
     end
     local now = GetServerTime()
     local exp = CurrentExpansion(playerMap)
-    local candidates = {}
+    local level = UnitLevel("player")
+    local candidates, tooLow, lowest = {}, 0, nil
     for _, q in ipairs(data.quests) do
         if q.ending > now and not C_QuestLog.IsQuestFlaggedCompleted(q.id) then
-            candidates[#candidates + 1] = q
+            -- Only the level is checked; quests that need an intro chain are kept.
+            if (q.minLevel or 0) > level then
+                tooLow = tooLow + 1
+                lowest = math.min(lowest or q.minLevel, q.minLevel)
+            else
+                candidates[#candidates + 1] = q
+            end
         end
     end
     if #candidates == 0 then
-        Say("на континенте заданий нет, и все задания из списка выполнены или истекли.")
+        if tooLow > 0 then
+            Say(("на континенте заданий нет, а остальным %d заданиям нужен уровень %d+ (у вас %d).")
+                :format(tooLow, lowest, level))
+        else
+            Say("на континенте заданий нет, и все задания из списка выполнены или истекли.")
+        end
         return
     end
     table.sort(candidates, function(a, b)
@@ -169,6 +181,9 @@ local function SuggestFromList(playerMap)
     if #candidates > 1 then
         Say(("Ещё в списке: %d заданий, %d амулетов."):format(#candidates - 1,
             (function() local s = 0 for i = 2, #candidates do s = s + candidates[i].count end return s end)()))
+    end
+    if tooLow > 0 then
+        Say(("Пропущено по уровню: %d (нужен %d+)."):format(tooLow, lowest))
     end
     if now - (data.generated or 0) > 20 * 3600 then
         Say("|cffff8800Список устарел (старше 20 ч) — перезапустите ppc_world_quests.py.|r")

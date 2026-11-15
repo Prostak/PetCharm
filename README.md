@@ -13,7 +13,8 @@ Install: copy the `PetCharm` folder to `World of Warcraft/_retail_/Interface/Add
   active world quest on your current continent that rewards Polished Pet Charms and
   super-tracks it. If the continent has none left, it suggests the next quest from
   the daily list made by `ppc_world_quests.py`: same expansion first, then the
-  bigger reward. Completed and expired quests are skipped. Drag the button to move
+  bigger reward. Completed and expired quests are skipped, and so are quests
+  above your character level (quests that need an intro chain are kept). Drag the button to move
   it around the minimap.
 - **Bag highlight**: Polished Pet Charms pulse in the default bags. Bag
   replacement addons (Bagnon, Baganator, …) are not supported.
