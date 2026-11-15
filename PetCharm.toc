@@ -1,7 +1,7 @@
 ## Interface: 110207, 120000, 120001, 120005
 ## Title: Pet Charm
-## Notes: Polished Pet Charm helper: /charm and minimap button find charm world quests; bag highlight; greys out Log Out in the Escape menu.
-## Version: 2.0
+## Notes: Polished Pet Charm helper and pet collection export: /charm and minimap button find charm world quests; bag highlight; greys out Log Out in the Escape menu.
+## Version: 2.1
 ## SavedVariables: PetCharmDB
 
 PPCQuests.lua

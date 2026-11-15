@@ -382,22 +382,51 @@ local function SetupBagHighlight()
 end
 
 ---------------------------------------------------------------------------
--- Export owned pet species to SavedVariables, so the out-of-game script
--- ppc_best_pet.py can tell which pets you already have. The file is
--- written by the game on logout or /reload.
+-- Export the pet collection to SavedVariables for the out-of-game scripts:
+--   ownedSpecies  – species you have (ppc_best_pet.py)
+--   missingPets   – obtainable species you don't have, with the journal's
+--                   source text and source types (missing_pets.py)
+-- The file is written by the game on logout or /reload.
 ---------------------------------------------------------------------------
 
 local MAX_SPECIES = 6000
+local MAX_SOURCE = 20  -- BATTLE_PET_SOURCE_1 .. _N globals (Drop, Quest, Vendor, ...)
+
+-- Source type indexes whose localized label ("Vendor:", "Торговец:") appears in the text.
+local function SourceTypes(text)
+    local found = {}
+    for i = 1, MAX_SOURCE do
+        local label = _G["BATTLE_PET_SOURCE_" .. i]
+        if label and text:find(label .. ":", 1, true) then found[#found + 1] = i end
+    end
+    return found
+end
 
 local function ExportOwnedPets()
     PetCharmDB = PetCharmDB or {}
-    local owned = {}
+    local owned, missing = {}, {}
     for speciesID = 1, MAX_SPECIES do
         local count = C_PetJournal.GetNumCollectedInfo(speciesID)
-        if count and count > 0 then owned[#owned + 1] = speciesID end
+        if count and count > 0 then
+            owned[#owned + 1] = speciesID
+        elseif count then
+            local name, _, petType, _, source, _, isWild, canBattle, tradeable, _, obtainable =
+                C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+            if name and obtainable then
+                missing[#missing + 1] = {
+                    id = speciesID, name = name, type = petType, source = source or "",
+                    sources = SourceTypes(source or ""), wild = isWild, battle = canBattle,
+                    tradeable = tradeable,
+                }
+            end
+        end
     end
     if #owned > 0 then  -- skip if the journal was not ready yet
+        local labels = {}
+        for i = 1, MAX_SOURCE do labels[i] = _G["BATTLE_PET_SOURCE_" .. i] or false end
         PetCharmDB.ownedSpecies = table.concat(owned, ",")
+        PetCharmDB.missingPets = missing
+        PetCharmDB.sourceLabels = labels
         PetCharmDB.ownedUpdated = time()
     end
 end

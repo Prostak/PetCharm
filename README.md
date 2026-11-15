@@ -24,8 +24,8 @@ Install: copy the `PetCharm` folder to `World of Warcraft/_retail_/Interface/Add
   /cast Revive Battle Pets
   /logout
   ```
-- **Collection export**: saves the species IDs of the pets you own to
-  SavedVariables (on logout or `/reload`) for `ppc_best_pet.py`.
+- **Collection export**: saves the pets you own and the ones you are missing (with their journal source) to
+  SavedVariables (on logout or `/reload`) for `ppc_best_pet.py` and `missing_pets.py`.
 
 Chat messages are in Russian.
 
@@ -40,6 +40,11 @@ Python 3, standard library only. Data comes from Wowhead.
 - **`ppc_best_pet.py [--top N] [--lang en|ru]`** — the most expensive pets sold for
   Polished Pet Charms that are not in your collection yet, and where to buy them.
   Wowhead pages are cached in `.ppc_cache` for a week.
+- **`missing_pets.py [--top N] [--all]`** — every obtainable pet you are missing,
+  sorted by how easy it is to get, using the source the in-game pet journal shows:
+  catch in the wild (grouped by zone) → vendor for gold → quest / special currency →
+  profession → achievement → random drop / world event → promotion / shop.
+  Tradeable pets are marked as buyable on the Auction House. Works offline.
 
 The default game path is the macOS one (`/Applications/World of Warcraft/_retail_`);
 use `--wow PATH` with `ppc_best_pet.py` on other systems.
@@ -66,7 +71,7 @@ use `--wow PATH` with `ppc_best_pet.py` on other systems.
 - **Подсветка в сумках**: Polished Pet Charm пульсирует в стандартных сумках.
 - **Меню Escape**: кнопка «Выход» неактивна — выходите макросом, который сначала
   воскрешает питомцев (см. выше).
-- **Экспорт коллекции** для `ppc_best_pet.py` при выходе из игры или `/reload`.
+- **Экспорт коллекции** (есть и недостающие) для `ppc_best_pet.py` и `missing_pets.py` при выходе из игры или `/reload`.
 
 ## Скрипты
 
@@ -76,6 +81,10 @@ Python 3, только стандартная библиотека. Данные
   заодно пишет `PPCQuests.lua` для аддона. Запускать раз в день, потом `/reload`.
 - `ppc_best_pet.py [--top N] [--lang en|ru]` — самые дорогие питомцы за амулеты,
   которых ещё нет в коллекции, и где их купить.
+- `missing_pets.py [--top N] [--all]` — все недостающие питомцы, от самых простых
+  к самым трудным по источнику из журнала питомцев: поймать (по зонам) → торговец
+  за золото → задание или особая валюта → профессия → достижение → случайная
+  добыча или событие → промо и магазин. Отмечает тех, кого можно купить на аукционе.
 
 ## Лицензия
 
