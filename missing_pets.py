@@ -63,7 +63,7 @@ TIER_TITLES = {
     2: "Купить у торговца за золото",
     3: "Задание, особая валюта, сокровище, репутация, Торговая лавка",
     4: "Профессия или открытие",
-    5: "Достижение, PvP или источник неизвестен",
+    5: "Достижение (и гильдейское), PvP или источник неизвестен",
     6: "Случайная добыча, рейд или событие",
     7: "Промо, карточная игра, магазин (реальные деньги / ограничено по времени)",
 }
@@ -269,6 +269,8 @@ def classify(pet, label_index):
         tier = SOURCE_TIER.get(t, UNKNOWN_TIER)
         if t == VENDOR and not only_gold(raw):
             tier = 3
+        if t == VENDOR and "Guild Vendor" in raw:
+            tier = 5  # sold only to guilds that earned an old guild achievement
         tiers.append(tier)
 
     zones = []
@@ -288,6 +290,14 @@ def classify(pet, label_index):
 
 
 # ---------------------------------------------------------------- main
+
+def is_never_collected(pet):
+    """Test pets, and temporary summons (Guild Page, Guild Herald: items with a
+    cooldown) that the journal lists but that never count as collected."""
+    if pet.get("name", "").startswith("[DNT]"):
+        return True
+    return any(line_label(ln) == "Cooldown" for ln in clean(pet.get("source", "")))
+
 
 def load(wow_dir):
     best = None
@@ -316,7 +326,7 @@ def main():
 
     labels = db.get("sourceLabels") or {}
     label_index = {v: k for k, v in labels.items() if v}
-    pets = [p for p in as_list(db["missingPets"]) if not p.get("name", "").startswith("[DNT]")]
+    pets = [p for p in as_list(db["missingPets"]) if not is_never_collected(p)]
     when = datetime.fromtimestamp(db.get("ownedUpdated", 0)).strftime("%Y-%m-%d %H:%M")
     names = Names(args.offline)
 
