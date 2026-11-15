@@ -1,8 +1,0 @@
-## Interface: 110207, 120000, 120001, 120005
-## Title: No Logout Button
-## Notes: Disables the Log Out button in the Escape menu; /charm tracks the nearest world quest with Polished Pet Charm.
-## Version: 1.5
-## SavedVariables: NoLogoutButtonDB
-
-PPCQuests.lua
-NoLogoutButton.lua

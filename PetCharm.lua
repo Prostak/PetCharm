@@ -1,4 +1,4 @@
--- NoLogoutButton: greys out the "Log Out" button in the Escape (Game) menu,
+-- PetCharm: greys out the "Log Out" button in the Escape (Game) menu,
 -- so logging out goes through the macro that revives battle pets first.
 --
 -- Only the button's look and enabled state are changed; its click handler is
@@ -122,7 +122,7 @@ local function CurrentExpansion(playerMap)
     end
     -- 2) A quest from the list that lies on the same continent.
     local continent = ContinentOf(playerMap)
-    for _, q in ipairs(NoLogoutButton_WQ and NoLogoutButton_WQ.quests or {}) do
+    for _, q in ipairs(PetCharm_WQ and PetCharm_WQ.quests or {}) do
         local zone = C_TaskQuest.GetQuestZoneID(q.id)
         if zone and ContinentOf(zone) == continent then return q.expansion end
     end
@@ -135,7 +135,7 @@ local function FormatLeft(secs)
 end
 
 local function SuggestFromList(playerMap)
-    local data = NoLogoutButton_WQ
+    local data = PetCharm_WQ
     if not data or not data.quests then
         Say("на континенте заданий нет, а списка от ppc_world_quests.py нет — запустите скрипт и сделайте /reload.")
         return
@@ -244,20 +244,20 @@ local function FindCharm(isRetry)
     end
 end
 
-SLASH_NOLOGOUTCHARM1 = "/charm"
-SlashCmdList.NOLOGOUTCHARM = function() FindCharm(false) end
+SLASH_PETCHARM1 = "/charm"
+SlashCmdList.PETCHARM = function() FindCharm(false) end
 
 ---------------------------------------------------------------------------
 -- Minimap button: Polished Pet Charm icon on the minimap edge.
 -- Left click = /charm, drag = move it around the minimap.
--- Its position is saved in NoLogoutButtonDB.angle (degrees).
+-- Its position is saved in PetCharmDB.angle (degrees).
 ---------------------------------------------------------------------------
 
 local function CreateMinimapButton()
-    NoLogoutButtonDB = NoLogoutButtonDB or {}
-    local db = NoLogoutButtonDB
+    PetCharmDB = PetCharmDB or {}
+    local db = PetCharmDB
 
-    local btn = CreateFrame("Button", "NoLogoutCharmMinimapButton", Minimap)
+    local btn = CreateFrame("Button", "PetCharmMinimapButton", Minimap)
     btn:SetSize(31, 31)
     btn:SetFrameStrata("MEDIUM")
     btn:SetFrameLevel(8)
@@ -322,7 +322,7 @@ end
 ---------------------------------------------------------------------------
 
 local function GetGlow(button)
-    if button.nlbGlow then return button.nlbGlow end
+    if button.petCharmGlow then return button.petCharmGlow end
     local g = button:CreateTexture(nil, "OVERLAY", nil, 7)
     g:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
     g:SetBlendMode("ADD")
@@ -337,7 +337,7 @@ local function GetGlow(button)
     a:SetDuration(0.8)
     g.anim = ag
     g:Hide()
-    button.nlbGlow = g
+    button.petCharmGlow = g
     return g
 end
 
@@ -348,9 +348,9 @@ local function MarkButton(button)
         local g = GetGlow(button)
         g:Show()
         if not g.anim:IsPlaying() then g.anim:Play() end
-    elseif button.nlbGlow then
-        button.nlbGlow.anim:Stop()
-        button.nlbGlow:Hide()
+    elseif button.petCharmGlow then
+        button.petCharmGlow.anim:Stop()
+        button.petCharmGlow:Hide()
     end
 end
 
@@ -390,15 +390,15 @@ end
 local MAX_SPECIES = 6000
 
 local function ExportOwnedPets()
-    NoLogoutButtonDB = NoLogoutButtonDB or {}
+    PetCharmDB = PetCharmDB or {}
     local owned = {}
     for speciesID = 1, MAX_SPECIES do
         local count = C_PetJournal.GetNumCollectedInfo(speciesID)
         if count and count > 0 then owned[#owned + 1] = speciesID end
     end
     if #owned > 0 then  -- skip if the journal was not ready yet
-        NoLogoutButtonDB.ownedSpecies = table.concat(owned, ",")
-        NoLogoutButtonDB.ownedUpdated = time()
+        PetCharmDB.ownedSpecies = table.concat(owned, ",")
+        PetCharmDB.ownedUpdated = time()
     end
 end
 

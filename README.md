@@ -1,4 +1,4 @@
-# NoLogoutButton
+# PetCharm
 
 Аддон для World of Warcraft (retail) и два скрипта для Polished Pet Charm.
 

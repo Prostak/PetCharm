@@ -3,11 +3,11 @@
 
 Data:
   * Pets, prices and vendors come from Wowhead (pages are cached in .ppc_cache).
-  * Your collection comes from the NoLogoutButton addon, which saves owned pet
-    species to WTF/Account/*/SavedVariables/NoLogoutButton.lua on logout or /reload.
+  * Your collection comes from the PetCharm addon, which saves owned pet
+    species to WTF/Account/*/SavedVariables/PetCharm.lua on logout or /reload.
 
 The script lives in the addon folder, so run it as:
-  python3 "/Applications/World of Warcraft/_retail_/Interface/AddOns/NoLogoutButton/ppc_best_pet.py"
+  python3 "/Applications/World of Warcraft/_retail_/Interface/AddOns/PetCharm/ppc_best_pet.py"
 
 Usage:
   python3 ppc_best_pet.py                # top 10, English names
@@ -118,8 +118,10 @@ def zone_name(zone_id, lang, refresh):
 # ---------------------------------------------------------------- collection
 
 def load_owned(wow_dir):
-    """Owned species IDs from the newest NoLogoutButton SavedVariables file."""
-    files = glob.glob(os.path.join(wow_dir, "WTF", "Account", "*", "SavedVariables", "NoLogoutButton.lua"))
+    """Owned species IDs from the newest PetCharm SavedVariables file."""
+    files = []
+    for name in ("PetCharm.lua", "NoLogoutButton.lua"):  # NoLogoutButton = the addon's old name
+        files += glob.glob(os.path.join(wow_dir, "WTF", "Account", "*", "SavedVariables", name))
     best = None
     for path in files:
         with open(path, encoding="utf-8", errors="replace") as f:
@@ -163,7 +165,7 @@ def main():
         print(f"Коллекция: {len(owned)} видов питомцев (данные от {when}).")
     else:
         owned = None
-        print("! Не нашёл данных коллекции от аддона NoLogoutButton.")
+        print("! Не нашёл данных коллекции от аддона PetCharm.")
         print("  Зайдите в игру, подождите 10 секунд и сделайте /reload или выйдите из игры.")
         print("  Пока показываю всех питомцев, без проверки, есть ли они у вас.\n")
 
