@@ -18,6 +18,8 @@ Install: copy the `PetCharm` folder to `World of Warcraft/_retail_/Interface/Add
   it around the minimap.
 - **Bag highlight**: Polished Pet Charms pulse in the default bags. Bag
   replacement addons (Bagnon, Baganator, …) are not supported.
+- **Pet source in tooltips**: caged pets (Auction House, bags) and items that
+  teach a pet show where the pet comes from, as in the pet journal.
 - **Escape menu**: the *Log Out* button is greyed out. The idea is to log out with
   a macro that revives your battle pets first:
   ```
@@ -70,6 +72,8 @@ use `--wow PATH` with `ppc_best_pet.py` on other systems.
   сначала то же дополнение, потом бо́льшая награда. Выполненные и истёкшие задания
   пропускаются. Кнопку можно перетаскивать по краю миникарты.
 - **Подсветка в сумках**: Polished Pet Charm пульсирует в стандартных сумках.
+- **Источник питомца в подсказке**: у питомцев в клетках (аукцион, сумки) и у
+  предметов, которые учат питомца, видно, где его берут, как в журнале питомцев.
 - **Меню Escape**: кнопка «Выход» неактивна — выходите макросом, который сначала
   воскрешает питомцев (см. выше).
 - **Экспорт коллекции** (есть и недостающие) для `ppc_best_pet.py` и `missing_pets.py` при выходе из игры или `/reload`.

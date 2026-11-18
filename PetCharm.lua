@@ -442,6 +442,41 @@ local function ExportOwnedPets()
     end
 end
 
+---------------------------------------------------------------------------
+-- Pet source in tooltips: where a pet comes from (the pet journal's source
+-- text), added to caged-pet tooltips (Auction House, bags) and to the
+-- tooltips of items that teach a pet.
+---------------------------------------------------------------------------
+
+local function PetSource(speciesID)
+    local source = select(5, C_PetJournal.GetPetInfoBySpeciesID(speciesID))
+    if source and source ~= "" then return source end
+end
+
+local function SetupPetSourceTooltips()
+    -- Caged pets: the Auction House and bags show them with BattlePetTooltip.
+    if BattlePetToolTip_Show and BattlePetTooltipTemplate_AddTextLine then
+        hooksecurefunc("BattlePetToolTip_Show", function(speciesID)
+            local source = speciesID and speciesID > 0 and PetSource(speciesID)
+            if source and BattlePetTooltip:IsShown() then
+                BattlePetTooltipTemplate_AddTextLine(BattlePetTooltip, source, 1, 1, 1, true)
+            end
+        end)
+    end
+    -- Items that teach a pet (sold on the Auction House as normal items).
+    if TooltipDataProcessor and Enum.TooltipDataType then
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, data)
+            if not (data and data.id) or tooltip.AddLine == nil then return end
+            local speciesID = select(13, C_PetJournal.GetPetInfoByItemID(data.id))
+            local source = speciesID and PetSource(speciesID)
+            if source then
+                tooltip:AddLine(" ")
+                tooltip:AddLine(source, 1, 1, 1, true)
+            end
+        end)
+    end
+end
+
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("PLAYER_LOGIN")
 loader:RegisterEvent("PLAYER_LOGOUT")
@@ -450,6 +485,7 @@ loader:SetScript("OnEvent", function(_, event)
     if event == "PLAYER_LOGIN" then
         CreateMinimapButton()
         SetupBagHighlight()
+        SetupPetSourceTooltips()
         C_Timer.After(10, ExportOwnedPets)
     elseif event == "PLAYER_LOGOUT" then
         ExportOwnedPets()
